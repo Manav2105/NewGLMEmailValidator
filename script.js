@@ -76,7 +76,8 @@ submitBtn.addEventListener("click", async (e) => {
   resultCont.innerHTML = `<img width="83px" src="emoji-171_256.gif" alt="">`;
   let emailCombinations = [];
   let str = ``;
-  let key = "API_KEY"; // Your ZeroBounce Key
+  let key = "e6fb42b4035142b19f1a9f2a8634fb9c";
+  // let key = "API_KEY"; // Your ZeroBounce Key
 
   suggestions.forEach((suggestion) => {
     const listItem = document.createElement("li");
