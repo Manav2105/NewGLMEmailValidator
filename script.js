@@ -1,119 +1,101 @@
-let remainingCombinations = []; // To store formats after the top 20
+let remainingCombinations = [];
+let foundValid = false;
+let stopRequested = false;
+let currentStr = "";
+const key = "API_KEY"; // REPLACE WITH YOUR KEY
 
-submitBtn.addEventListener("click", async (e) => {
-  e.preventDefault();
-  document.getElementById("continueBtn").style.display = "none";
-  
-  const fullName = document.getElementById("fullName").value.trim();
-  const companyName = document.getElementById("companyName").value.trim();
-  const nameParts = fullName.split(/\s+/);
-  
-  const firstName = nameParts[0] || "";
-  const middleName = nameParts.length > 2 ? nameParts[1] : "";
-  const lastName = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
+const submitBtn = document.getElementById("submitBtn");
+const stopBtn = document.getElementById("stopBtn");
+const continueBtn = document.getElementById("continueBtn");
+const resultCont = document.getElementById("resultCont");
+const emailList = document.getElementById("emailList");
 
-  const emailList = document.getElementById("emailList");
-  emailList.innerHTML = "";
-  
-  // PRIORITY LIST (Top 20)
-  let top20 = [
-    `${firstName}.${lastName}@${companyName}`,
-    `${firstName}@${companyName}`,
-    `${firstName.charAt(0)}${lastName}@${companyName}`,
-    `${firstName}${lastName}@${companyName}`,
-    `${firstName}.${middleName}.${lastName}@${companyName}`, // 3-word priority
-    `${firstName}${middleName.charAt(0)}${lastName}@${companyName}`, // 3-word priority
-    `${lastName}@${companyName}`,
-    `${firstName.charAt(0)}.${lastName}@${companyName}`,
-    `${firstName}-${lastName}@${companyName}`,
-    `${firstName}_${lastName}@${companyName}`,
-    `${firstName}.${lastName.charAt(0)}@${companyName}`,
-    `${firstName}${lastName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}.${lastName.charAt(0)}@${companyName}`,
-    `${lastName}.${firstName}@${companyName}`,
-    `${firstName}-${middleName}-${lastName}@${companyName}`,
-    `${firstName.charAt(0)}${middleName.charAt(0)}${lastName}@${companyName}`,
-    `${firstName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
-    `${firstName}${middleName}@${companyName}`,
-    `${firstName}.${middleName}@${companyName}`
-  ];
+function copyToClipboard(text) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+}
 
-  // ALL OTHER FORMATS
-  let others = [
-    `${lastName.charAt(0)}${firstName}@${companyName}`,
-    `${lastName.charAt(0)}.${firstName}@${companyName}`,
-    `${lastName}-${firstName}@${companyName}`,
-    `${firstName.charAt(0)}-${lastName}@${companyName}`,
-    `${lastName.charAt(0)}-${firstName}@${companyName}`,
-    `${firstName}-${lastName.charAt(0)}@${companyName}`,
-    `${lastName}-${firstName.charAt(0)}@${companyName}`,
-    `${lastName}${firstName}@${companyName}`,
-    `${lastName}.${firstName.charAt(0)}@${companyName}`,
-    `${lastName}${firstName.charAt(0)}@${companyName}`,
-    `${lastName}_${firstName}@${companyName}`,
-    `${firstName.charAt(0)}_${lastName}@${companyName}`,
-    `${lastName.charAt(0)}_${firstName}@${companyName}`,
-    `${lastName.charAt(0)}.${firstName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}_${lastName.charAt(0)}@${companyName}`,
-    `${lastName.charAt(0)}_${firstName.charAt(0)}@${companyName}`,
-    `${firstName}_${lastName.charAt(0)}@${companyName}`,
-    `${lastName}_${firstName.charAt(0)}@${companyName}`,
-    `${lastName.charAt(0)}${firstName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}-${lastName.charAt(0)}@${companyName}`,
-    `${lastName.charAt(0)}-${firstName.charAt(0)}@${companyName}`
-  ];
+async function validateBatch(batch) {
+    stopRequested = false;
+    stopBtn.style.display = "inline-block";
 
-  remainingCombinations = others; // Save for later
-  resultCont.innerHTML = `<img width="83px" src="emoji-171_256.gif" alt="">`;
-  let str = ``;
-  let key = "API_KEY";
-  let foundValid = false;
-
-  // Function to render and validate
-  async function validateBatch(batch) {
     for (let email of batch) {
-      if (foundValid) break; // STOP IMMEDIATELY if valid is found
+        if (foundValid || stopRequested) break;
 
-      // UI: Add to list
-      const listItem = document.createElement("li");
-      listItem.textContent = email;
-      const copyButton = document.createElement("button");
-      copyButton.id = "CopyBtn";
-      const imgElement = document.createElement("img");
-      imgElement.src = "copy.png";
-      copyButton.appendChild(imgElement);
-      copyButton.addEventListener("click", () => copyToClipboard(email));
-      listItem.appendChild(copyButton);
-      emailList.appendChild(listItem);
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `${email} <button id="CopyBtn" onclick="copyToClipboard('${email}')"><img src="copy.png"></button>`;
+        emailList.appendChild(listItem);
 
-      // API Call
-      try {
-        let res = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${key}&email=${email}&ip_address=156.124.12.145`);
-        let result = await res.json();
-        
-        if (result.status) {
-          str += `<li>${result.status}</li>`;
-          resultCont.innerHTML = str;
-          
-          if (result.status.toLowerCase() === "valid" || result.status.toLowerCase() === "catch-all") {
-            foundValid = true;
-            resultCont.innerHTML += `<p style="color:blue; font-size:12px;">✔ Valid Email Found. Stopping.</p>`;
-          }
-        }
-      } catch (e) { console.error(e); }
+        try {
+            let res = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${key}&email=${email}&ip_address=1.1.1.1`);
+            let result = await res.json();
+            
+            if (result.status) {
+                currentStr += `<li style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: ${result.status === 'valid' ? 'green' : 'black'}">${result.status}</li>`;
+                resultCont.innerHTML = currentStr;
+                
+                if (result.status.toLowerCase() === "valid" || result.status.toLowerCase() === "catch-all") {
+                    foundValid = true;
+                    resultCont.innerHTML += `<p style="color:#a100ff; font-weight:bold; padding:10px;">MATCH FOUND - TERMINATING PROCESS</p>`;
+                }
+            }
+        } catch (error) { console.error("Error:", error); }
     }
+    stopBtn.style.display = "none";
+}
 
-    if (!foundValid && batch === top20) {
-      document.getElementById("continueBtn").style.display = "block";
-    }
-  }
-
-  await validateBatch(top20);
+stopBtn.addEventListener("click", () => {
+    stopRequested = true;
+    resultCont.innerHTML += `<p style="color:red; font-weight:bold; padding:10px;">PROCESS STOPPED BY USER</p>`;
 });
 
-// Listener for the "Try Remaining" button
-document.getElementById("continueBtn").addEventListener("click", async () => {
-    document.getElementById("continueBtn").style.display = "none";
-    // continue validating with remainingCombinations...
+submitBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const fullName = document.getElementById("fullName").value.trim();
+    const companyName = document.getElementById("companyName").value.trim();
+    const nameParts = fullName.split(/\s+/);
+
+    if (nameParts.length > 3) {
+        resultCont.innerHTML = `<p style="color: red; border: 1px solid red; padding: 15px;"><strong>ACCESS DENIED:</strong> Maximum 3 words allowed for Name input.</p>`;
+        return;
+    }
+
+    emailList.innerHTML = "";
+    resultCont.innerHTML = "Initializing Analysis...";
+    currentStr = "";
+    foundValid = false;
+    continueBtn.style.display = "none";
+
+    const f = nameParts[0] || "";
+    const m = nameParts.length > 2 ? nameParts[1] : "";
+    const l = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
+
+    let top20 = [
+        `${f}.${l}@${companyName}`, `${f}@${companyName}`, `${f.charAt(0)}${l}@${companyName}`, 
+        `${f}${l}@${companyName}`, `${f}.${m}.${l}@${companyName}`, `${f}${m.charAt(0)}${l}@${companyName}`,
+        `${l}@${companyName}`, `${f.charAt(0)}.${l}@${companyName}`, `${f}-${l}@${companyName}`,
+        `${f}_${l}@${companyName}`, `${f}.${l.charAt(0)}@${companyName}`, `${f}${l.charAt(0)}@${companyName}`,
+        `${f.charAt(0)}${l.charAt(0)}@${companyName}`, `${f.charAt(0)}.${l.charAt(0)}@${companyName}`,
+        `${l}.${f}@${companyName}`, `${f}-${m}-${l}@${companyName}`, `${f.charAt(0)}${m.charAt(0)}${l}@${companyName}`,
+        `${f}${m}@${companyName}`, `${f}.${m}@${companyName}`, `${f.charAt(0)}${m}${l}@${companyName}`
+    ];
+
+    remainingCombinations = [
+        `${l.charAt(0)}${f}@${companyName}`, `${l.charAt(0)}.${f}@${companyName}`, `${l}-${f}@${companyName}`,
+        `${f.charAt(0)}-${l}@${companyName}`, `${l.charAt(0)}-${f}@${companyName}`, `${f}-${l.charAt(0)}@${companyName}`,
+        `${l}-${f.charAt(0)}@${companyName}`, `${l}${f}@${companyName}`, `${l}.${f.charAt(0)}@${companyName}`,
+        `${l}_${f}@${companyName}`, `${f.charAt(0)}_${l}@${companyName}`, `${l.charAt(0)}_${f}@${companyName}`
+    ];
+
+    await validateBatch(top20);
+    if (!foundValid && !stopRequested) continueBtn.style.display = "block";
+});
+
+continueBtn.addEventListener("click", async () => {
+    continueBtn.style.display = "none";
+    await validateBatch(remainingCombinations);
 });
