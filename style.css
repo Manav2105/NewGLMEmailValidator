@@ -1,0 +1,175 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: aliceblue;
+  overflow-y: hidden;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: black;
+  color: white;
+  padding: 19px 12px;
+}
+
+nav ul {
+  display: flex;
+}
+
+ul li {
+  list-style: none;
+  padding: 0 15px;
+}
+
+ul li a {
+  color: whitesmoke;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  color: cyan;
+  font-weight: bold;
+}
+
+.logo{
+  color: white;
+}
+.logo:hover{
+  font-weight: bold;
+  cursor: pointer;
+  color: cyan;
+}
+
+main {
+  min-height: 87.6vh;
+  padding: 2px;
+}
+
+.container {
+  /* display: flex; */
+  max-width: 80vw;
+  /* margin: auto; */
+  padding: 9px 10px;
+}
+
+.container h1 {
+  padding: 12px 0;
+}
+
+.input {
+  display: flex;
+}
+
+input[type="text"] {
+  background-color: aliceblue;
+  padding: 10px 2px 10px 2px;
+  border: 2px groove black;
+  border-radius: 4px;
+  margin: 0px 5px 0px 5px;
+}
+
+.btn {
+  padding: 9px 20px;
+  background: black;
+  color: white;
+  /* background: #9bfdfd;
+  color: black; */
+  border: 2px solid black;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover{
+  font-size: 15px;
+  font-weight: bold;
+  border: 2px dashed black;
+  /* background: black; */
+  /* color: white; */
+  background: #9bfdfd;
+  color: black;
+}
+
+
+#result {
+  border: 10px dashed #ccdfe4;
+  border-radius: 25px;
+  margin: 18px 13px 0px 13px;
+  background-color: #d1fcfc;
+}
+
+#result h2 {
+  margin: 24px 14px;
+  border: 10px solid #ccdfe4;
+  border-radius: 25px;
+  padding: 10px;
+}
+
+.validation-results {
+  display: flex;
+  padding-top: 10px;
+  margin: 24px 14px;
+  border: 10px solid #ccdfe4;
+  border-radius: 25px;
+  padding: 10px;
+  height: 300px;
+  overflow: auto;
+}
+
+#emailList {
+  margin-right: 25px;
+  font-weight: bold;
+}
+
+#emailList img {
+  height: 12px;
+  width: 12px;
+}
+
+#emailList li {
+  text-transform: lowercase;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+#emailList li :hover{
+  cursor: pointer;
+}
+
+#resultCont {
+  font-weight: bold;
+}
+
+#resultCont::first-letter {
+  text-transform: lowercase;
+}
+
+#CopyBtn {
+  border: 0px solid #70f4f4;
+  border-radius: 0px;
+  color: black;
+  background-color: #d1fcfc;
+}
+
+#CopyBtn:hover {
+  height: 15px;
+}
+
+footer {
+  display: flex;
+  background-color: black;
+  color: white;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+}
+footer:hover{
+  color: cyan;
+}
