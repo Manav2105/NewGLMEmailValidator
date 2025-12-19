@@ -1,16 +1,15 @@
 submitBtn.addEventListener("click", async (e) => {
   e.preventDefault();
 
-  // New logic: Get full name and split it into parts
+  // Logic to handle 1, 2, or 3 words from a single input
   const fullName = document.getElementById("fullName").value.trim();
-  const nameParts = fullName.split(/\s+/);
+  const companyName = document.getElementById("companyName").value.trim();
   
+  const nameParts = fullName.split(/\s+/);
   const firstName = nameParts[0] || "";
-  // If 3 words: middle is index 1, last is index 2. If 2 words: middle is empty, last is index 1.
   const middleName = nameParts.length > 2 ? nameParts[1] : "";
   const lastName = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
-  
-  const companyName = document.getElementById("companyName").value.trim();
+
   const emailList = document.getElementById("emailList");
   emailList.innerHTML = "";
 
@@ -52,12 +51,13 @@ submitBtn.addEventListener("click", async (e) => {
     `${lastName.charAt(0)}-${firstName.charAt(0)}@${companyName}`,
   ];
 
-  // EXTRA FORMATS FOR 3-WORD NAMES
+  // ADDITIONAL 3-WORD COMBINATIONS (Added only if middle name exists)
   if (middleName !== "") {
-    const threeWordExtras = [
+    const extra3WordFormats = [
       `${firstName}.${middleName}.${lastName}@${companyName}`,
       `${firstName}${middleName}${lastName}@${companyName}`,
       `${firstName.charAt(0)}${middleName.charAt(0)}${lastName}@${companyName}`,
+      `${firstName.charAt(0)}.${middleName.charAt(0)}.${lastName}@${companyName}`,
       `${firstName}.${middleName.charAt(0)}.${lastName}@${companyName}`,
       `${firstName}${middleName.charAt(0)}${lastName}@${companyName}`,
       `${firstName.charAt(0)}${middleName}${lastName}@${companyName}`,
@@ -68,16 +68,16 @@ submitBtn.addEventListener("click", async (e) => {
       `${firstName.charAt(0)}${middleName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
       `${lastName}.${firstName}.${middleName.charAt(0)}@${companyName}`,
       `${firstName}${middleName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
-      `${firstName}.${middleName.charAt(0)}@${companyName}`
+      `${firstName.charAt(0)}-${middleName.charAt(0)}-${lastName.charAt(0)}@${companyName}`,
+      `${firstName}_${middleName.charAt(0)}@${companyName}`
     ];
-    suggestions = [...suggestions, ...threeWordExtras];
+    suggestions = [...suggestions, ...extra3WordFormats];
   }
 
   resultCont.innerHTML = `<img width="83px" src="emoji-171_256.gif" alt="">`;
   let emailCombinations = [];
   let str = ``;
-  let key = "e6fb42b4035142b19f1a9f2a8634fb9c";
-  // let key = "API_KEY"; // Your ZeroBounce Key
+  let key = "API_KEY"; // REPLACE WITH YOUR ACTUAL KEY
 
   suggestions.forEach((suggestion) => {
     const listItem = document.createElement("li");
@@ -85,11 +85,12 @@ submitBtn.addEventListener("click", async (e) => {
 
     const copyButton = document.createElement("button");
     copyButton.id = "CopyBtn";
-    const imgElement = document.createElement("img");
-    imgElement.src = "copy.png";
-    imgElement.alt = "CopyImg";
-    copyButton.appendChild(imgElement);
 
+    const imgElement = document.createElement("img");
+    imgElement.src = "copy.png"; 
+    imgElement.alt = "CopyImg";
+
+    copyButton.appendChild(imgElement);
     copyButton.addEventListener("click", () => {
       copyToClipboard(suggestion);
     });
@@ -110,8 +111,8 @@ submitBtn.addEventListener("click", async (e) => {
         for (let resKey of Object.keys(result)) {
           if (resKey == "status") {
             str = str + `<li>${result[resKey]}</li>`;
+            resultCont.innerHTML = str;
           }
-          resultCont.innerHTML = str;
         }
       } catch (error) {
         console.error("Error validating email:", error);
@@ -120,3 +121,15 @@ submitBtn.addEventListener("click", async (e) => {
     zbValidating();
   }
 });
+
+document.getElementById("resultCont").style.backgroundColor = "#5dffff78";
+document.getElementById("resultCont").style.color = "green";
+
+function copyToClipboard(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
