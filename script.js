@@ -1,12 +1,21 @@
 submitBtn.addEventListener("click", async (e) => {
   e.preventDefault();
 
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
+  // New logic: Get full name and split it into parts
+  const fullName = document.getElementById("fullName").value.trim();
+  const nameParts = fullName.split(/\s+/);
+  
+  const firstName = nameParts[0] || "";
+  // If 3 words: middle is index 1, last is index 2. If 2 words: middle is empty, last is index 1.
+  const middleName = nameParts.length > 2 ? nameParts[1] : "";
+  const lastName = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
+  
   const companyName = document.getElementById("companyName").value.trim();
   const emailList = document.getElementById("emailList");
   emailList.innerHTML = "";
-  const suggestions = [
+
+  // YOUR ORIGINAL 34 FORMATS (Unchanged)
+  let suggestions = [
     `${firstName}.${lastName}@${companyName}`,
     `${lastName}.${firstName}@${companyName}`,
     `${firstName}@${companyName}`,
@@ -42,38 +51,49 @@ submitBtn.addEventListener("click", async (e) => {
     `${firstName.charAt(0)}-${lastName.charAt(0)}@${companyName}`,
     `${lastName.charAt(0)}-${firstName.charAt(0)}@${companyName}`,
   ];
+
+  // EXTRA FORMATS FOR 3-WORD NAMES
+  if (middleName !== "") {
+    const threeWordExtras = [
+      `${firstName}.${middleName}.${lastName}@${companyName}`,
+      `${firstName}${middleName}${lastName}@${companyName}`,
+      `${firstName.charAt(0)}${middleName.charAt(0)}${lastName}@${companyName}`,
+      `${firstName}.${middleName.charAt(0)}.${lastName}@${companyName}`,
+      `${firstName}${middleName.charAt(0)}${lastName}@${companyName}`,
+      `${firstName.charAt(0)}${middleName}${lastName}@${companyName}`,
+      `${firstName}-${middleName}-${lastName}@${companyName}`,
+      `${firstName}_${middleName}_${lastName}@${companyName}`,
+      `${firstName}${middleName.charAt(0)}@${companyName}`,
+      `${firstName}.${middleName}@${companyName}`,
+      `${firstName.charAt(0)}${middleName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
+      `${lastName}.${firstName}.${middleName.charAt(0)}@${companyName}`,
+      `${firstName}${middleName.charAt(0)}${lastName.charAt(0)}@${companyName}`,
+      `${firstName}.${middleName.charAt(0)}@${companyName}`
+    ];
+    suggestions = [...suggestions, ...threeWordExtras];
+  }
+
   resultCont.innerHTML = `<img width="83px" src="emoji-171_256.gif" alt="">`;
   let emailCombinations = [];
   let str = ``;
-  // let key = "e6fb42b4035142b19f1a9f2a8634fb9c";
-  let key = "API_KEY";
+  let key = "API_KEY"; // Your ZeroBounce Key
 
   suggestions.forEach((suggestion) => {
     const listItem = document.createElement("li");
     listItem.textContent = suggestion;
 
-    // Create a copy button for each email with an image
     const copyButton = document.createElement("button");
     copyButton.id = "CopyBtn";
-
-    // Create an image element
     const imgElement = document.createElement("img");
-    // imgElement.src = "/copy-icons/copy.png";
     imgElement.src = "copy.png";
-    // imgElement.src = "copy2.png";
-    // imgElement.src = "copy3.png";
     imgElement.alt = "CopyImg";
-
-    // Append the image to the button
     copyButton.appendChild(imgElement);
 
     copyButton.addEventListener("click", () => {
       copyToClipboard(suggestion);
     });
 
-    // Append the email and copy button to the list item
     listItem.appendChild(copyButton);
-
     emailCombinations.push(suggestion);
     emailList.appendChild(listItem);
   });
@@ -82,20 +102,13 @@ submitBtn.addEventListener("click", async (e) => {
     let email = emailCombinations[k];
     let url = `https://api.zerobounce.net/v2/validate?api_key=${key}&email=${email}&ip_address=156.124.12.145`;
 
-    zbValidating();
     async function zbValidating() {
       try {
         let res = await fetch(url);
         let result = await res.json();
-        for (key of Object.keys(result)) {
-          if (key == "status") {
-            // OPTIMIZATION
-            // if (result[key].toLowerCase() != "valid" && result[key].toLowerCase()!="catch-all"){
-            //   // Stop execution if the result is "valid"
-            //   console.log("Validation result is 'valid'. Stopping execution.");
-            //   return;
-            // }
-            str = str + `<li>${result[key]}</li>`;
+        for (let resKey of Object.keys(result)) {
+          if (resKey == "status") {
+            str = str + `<li>${result[resKey]}</li>`;
           }
           resultCont.innerHTML = str;
         }
@@ -103,19 +116,6 @@ submitBtn.addEventListener("click", async (e) => {
         console.error("Error validating email:", error);
       }
     }
+    zbValidating();
   }
 });
-
-document.getElementById("resultCont").style.backgroundColor = "#5dffff78";
-document.getElementById("resultCont").style.color = "green";
-
-// Function to copy text to clipboard
-function copyToClipboard(text, button) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
-  console.log("Email copied to clipboard: " + text);
-}
