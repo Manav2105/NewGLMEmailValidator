@@ -1,175 +1,65 @@
-* {
-  margin: 0;
-  padding: 0;
+:root {
+    --accenture-purple: #a100ff;
+    --accenture-black: #000000;
+    --accenture-grey: #757575;
 }
 
 body {
-  background-color: aliceblue;
-  overflow-y: hidden;
+    font-family: 'Graphik', Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    color: var(--accenture-black);
 }
 
 nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: black;
-  color: white;
-  padding: 19px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--accenture-black);
+    padding: 20px 40px;
+    border-bottom: 4px solid var(--accenture-purple);
 }
 
-nav ul {
-  display: flex;
-}
+nav .logo { color: white; font-size: 22px; }
+nav ul { display: flex; list-style: none; }
+nav ul li a { color: white; text-decoration: none; padding: 0 15px; font-size: 14px; }
 
-ul li {
-  list-style: none;
-  padding: 0 15px;
-}
+.container { padding: 40px; max-width: 900px; margin: auto; background: white; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+h1 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
 
-ul li a {
-  color: whitesmoke;
-  text-decoration: none;
-}
-
-ul li a:hover {
-  color: cyan;
-  font-weight: bold;
-}
-
-.logo{
-  color: white;
-}
-.logo:hover{
-  font-weight: bold;
-  cursor: pointer;
-  color: cyan;
-}
-
-main {
-  min-height: 87.6vh;
-  padding: 2px;
-}
-
-.container {
-  /* display: flex; */
-  max-width: 80vw;
-  /* margin: auto; */
-  padding: 9px 10px;
-}
-
-.container h1 {
-  padding: 12px 0;
-}
-
-.input {
-  display: flex;
-}
-
+.input-group { display: flex; flex-direction: column; gap: 15px; }
 input[type="text"] {
-  background-color: aliceblue;
-  padding: 10px 2px 10px 2px;
-  border: 2px groove black;
-  border-radius: 4px;
-  margin: 0px 5px 0px 5px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
+
+.button-row { display: flex; gap: 10px; }
 
 .btn {
-  padding: 9px 20px;
-  background: black;
-  color: white;
-  /* background: #9bfdfd;
-  color: black; */
-  border: 2px solid black;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
+    padding: 15px 30px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+    text-transform: uppercase;
 }
 
-.btn:hover{
-  font-size: 15px;
-  font-weight: bold;
-  border: 2px dashed black;
-  /* background: black; */
-  /* color: white; */
-  background: #9bfdfd;
-  color: black;
-}
+.btn-primary { background: var(--accenture-black); color: white; }
+.btn-primary:hover { background: var(--accenture-purple); }
 
+.btn-danger { background: #ff3b3b; color: white; }
+.btn-accent { background: var(--accenture-purple); color: white; margin-top: 20px; width: 100%; }
 
-#result {
-  border: 10px dashed #ccdfe4;
-  border-radius: 25px;
-  margin: 18px 13px 0px 13px;
-  background-color: #d1fcfc;
-}
+#result { margin: 20px 40px; background: white; border-top: 5px solid var(--accenture-purple); padding: 20px; }
+.validation-results { display: flex; height: 400px; overflow-y: auto; border: 1px solid #eee; }
 
-#result h2 {
-  margin: 24px 14px;
-  border: 10px solid #ccdfe4;
-  border-radius: 25px;
-  padding: 10px;
-}
+#emailList, #resultCont { flex: 1; list-style: none; padding: 10px; margin: 0; }
+#emailList li { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f9f9f9; font-weight: bold; }
 
-.validation-results {
-  display: flex;
-  padding-top: 10px;
-  margin: 24px 14px;
-  border: 10px solid #ccdfe4;
-  border-radius: 25px;
-  padding: 10px;
-  height: 300px;
-  overflow: auto;
-}
+#CopyBtn { background: none; border: none; cursor: pointer; }
+#CopyBtn img { width: 16px; opacity: 0.6; }
 
-#emailList {
-  margin-right: 25px;
-  font-weight: bold;
-}
-
-#emailList img {
-  height: 12px;
-  width: 12px;
-}
-
-#emailList li {
-  text-transform: lowercase;
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-}
-
-#emailList li :hover{
-  cursor: pointer;
-}
-
-#resultCont {
-  font-weight: bold;
-}
-
-#resultCont::first-letter {
-  text-transform: lowercase;
-}
-
-#CopyBtn {
-  border: 0px solid #70f4f4;
-  border-radius: 0px;
-  color: black;
-  background-color: #d1fcfc;
-}
-
-#CopyBtn:hover {
-  height: 15px;
-}
-
-footer {
-  display: flex;
-  background-color: black;
-  color: white;
-  padding: 10px;
-  justify-content: center;
-  align-items: center;
-  font-size: 15px;
-}
-footer:hover{
-  color: cyan;
-}
+footer { background: var(--accenture-black); color: white; padding: 20px; text-align: center; font-size: 12px; margin-top: 50px; }
