@@ -4,42 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>PRO – VALIDATOR v3.0</title>
+    <title>PRO – FINDER v3.0</title>
 </head>
 <body>
-    <header class="main-header">
+    <header class="header">
         <div class="logo">PRO – FINDER <span class="v-tag">v3.0</span></div>
-        <div class="stats-panel">
-            <div class="stat-item">MAIN RECORDS: <span id="totalRecords">0</span></div>
-            <div class="stat-item">VALID: <span id="validCount" style="color: #28a745;">0</span></div>
-            <div class="stat-item">CATCH-ALL: <span id="catchCount" style="color: #ffcc00;">0</span></div>
+        <div class="stats">
+            <div class="stat">VALID: <span id="v-count">0</span></div>
+            <div class="stat">CHECKED: <span id="c-count">0</span></div>
         </div>
     </header>
 
-    <main>
-        <div class="control-panel">
-            <div class="input-row">
-                <input type="text" id="fullName" placeholder="Enter Full Name (Max 3 words)" required>
-                <input type="text" id="companyName" placeholder="Domain (e.g., google.com)" required>
-                <button id="submitBtn" class="primary-btn">RUN ANALYSIS</button>
-                <button id="stopBtn" class="secondary-btn" style="display:none; background: #ff3b3b;">STOP</button>
-            </div>
+    <main class="main-content">
+        <div class="search-bar">
+            <input type="text" id="fullName" placeholder="Full Name (Max 3 words)">
+            <input type="text" id="domain" placeholder="Company Domain">
+            <button id="submitBtn">ANALYSIS</button>
+            <button id="stopBtn" class="stop-btn" style="display:none;">STOP</button>
         </div>
 
-        <div id="loader" class="loader-container" style="display:none;">
-            <div class="scanning-line"></div>
-            <p>PENETRATING DATABASE PATHS...</p>
+        <div id="scanner" class="scanner" style="display:none;">
+            <div class="scan-bar"></div>
+            <p>PENETRATING DATABASE...</p>
         </div>
 
-        <div id="resultsWrapper">
+        <div id="resultsGrid" class="results-grid">
             </div>
 
-        <button id="continueBtn" class="accent-btn" style="display:none;">FETCH EXTENDED RECORDS</button>
+        <button id="continueBtn" class="cont-btn" style="display:none;">TRY EXTENDED FORMATS</button>
     </main>
-
-    <footer>
-        &copy; 2025 PRO – FINDER v2.0 || Internal Security Protocol Active
-    </footer>
 
     <script src="script.js"></script>
 </body>
