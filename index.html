@@ -4,44 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>GLM-Validator</title>
+    <title>PRO – VALIDATOR v3.0</title>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Glam-Validate</div>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact Us</a></li>
-            </ul>
-        </nav>
+    <header class="main-header">
+        <div class="logo">PRO – FINDER <span class="v-tag">v3.0</span></div>
+        <div class="stats-panel">
+            <div class="stat-item">MAIN RECORDS: <span id="totalRecords">0</span></div>
+            <div class="stat-item">VALID: <span id="validCount" style="color: #28a745;">0</span></div>
+            <div class="stat-item">CATCH-ALL: <span id="catchCount" style="color: #ffcc00;">0</span></div>
+        </div>
     </header>
+
     <main>
-        <div class="container">
-            <div>
-                <h1>Enter your email to validate</h1>
-            </div>
-            <div class="input">
-                <input placeholder="Ajay Kumar Singh" type="text" id="fullName" required>
-                <input placeholder="google.com" type="text" id="companyName" required>
-                <input id="submitBtn" class="btn" type="submit" value="Generate Email Formats">
-                <button id="stopBtn" class="btn" style="display:none; margin-left:10px; background:red;">Stop</button>
-            </div>
-            <button id="continueBtn" class="btn" style="display:none; margin-top:20px; background:orange;">Try Remaining Formats</button>
-        </div>
-        <div id="result">
-            <h2>Results</h2>
-            <div class="validation-results">
-                <ul id="emailList"></ul>
-                <ul id="resultCont"></ul>
-                <p><b>Scroll Down👇</b></p>
+        <div class="control-panel">
+            <div class="input-row">
+                <input type="text" id="fullName" placeholder="Enter Full Name (Max 3 words)" required>
+                <input type="text" id="companyName" placeholder="Domain (e.g., google.com)" required>
+                <button id="submitBtn" class="primary-btn">RUN ANALYSIS</button>
+                <button id="stopBtn" class="secondary-btn" style="display:none; background: #ff3b3b;">STOP</button>
             </div>
         </div>
+
+        <div id="loader" class="loader-container" style="display:none;">
+            <div class="scanning-line"></div>
+            <p>PENETRATING DATABASE PATHS...</p>
+        </div>
+
+        <div id="resultsWrapper">
+            </div>
+
+        <button id="continueBtn" class="accent-btn" style="display:none;">FETCH EXTENDED RECORDS</button>
     </main>
+
     <footer>
-        &copy; 2023 Glam-Validate.com || All Rights Reserved.
+        &copy; 2025 PRO – FINDER v2.0 || Internal Security Protocol Active
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
