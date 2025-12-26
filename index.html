@@ -4,49 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Accenture | Email Validator Tool</title>
+    <title>GLM-Validator</title>
 </head>
 <body>
     <header>
         <nav>
-            <div class="logo"><strong>Accenture</strong> <span style="font-weight:100;">| Verification Hub</span></div>
+            <div class="logo">Glam-Validate</div>
             <ul>
-                <li><a href="#">Solutions</a></li>
-                <li><a href="#">Insights</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact Us</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <div class="container">
-            <h1>Email Format Generator & Validator</h1>
-            <p style="margin-bottom: 20px; color: #666;">Internal tool for lead verification and data integrity.</p>
-            
-            <div class="input-group">
-                <input placeholder="Full Name (Max 3 words)" type="text" id="fullName" required>
-                <input placeholder="Company Domain (e.g. accenture.com)" type="text" id="companyName" required>
-                <div class="button-row">
-                    <input id="submitBtn" class="btn btn-primary" type="submit" value="Run Analysis (Top 20)">
-                    <button id="stopBtn" class="btn btn-danger" style="display:none;">Stop Process</button>
-                </div>
+            <div>
+                <h1>Enter your email to validate</h1>
             </div>
-
-            <button id="continueBtn" class="btn btn-accent" style="display:none;">Try Extended Formats</button>
+            <div class="input">
+                <input placeholder="Ajay Kumar Singh" type="text" id="fullName" required>
+                <input placeholder="google.com" type="text" id="companyName" required>
+                <input id="submitBtn" class="btn" type="submit" value="Generate Email Formats">
+                <button id="stopBtn" class="btn" style="display:none; margin-left:10px; background:red;">Stop</button>
+            </div>
+            <button id="continueBtn" class="btn" style="display:none; margin-top:20px; background:orange;">Try Remaining Formats</button>
         </div>
-
         <div id="result">
-            <div class="result-header">
-                <h2>Validation Stream</h2>
-                <div id="statusIndicator"></div>
-            </div>
+            <h2>Results</h2>
             <div class="validation-results">
                 <ul id="emailList"></ul>
                 <ul id="resultCont"></ul>
+                <p><b>Scroll Down👇</b></p>
             </div>
         </div>
     </main>
     <footer>
-        &copy; 2025 Accenture. All Rights Reserved. For Internal Use Only.
+        &copy; 2023 Glam-Validate.com || All Rights Reserved.
     </footer>
     <script src="script.js"></script>
 </body>
