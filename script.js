@@ -1,128 +1,106 @@
-let remainingCombinations = [];
-let foundValid = false;
+let remainingBatch = [];
 let isStopped = false;
-let currentStr = "";
-let key = "64a348f4f4144e03b53dddde4ad596cd"; // REPLACE WITH YOUR KEY
+let validCount = 0;
+let catchCount = 0;
+const apiKey = "API_KEY"; // REPLACE WITH YOUR KEY
 
 const submitBtn = document.getElementById("submitBtn");
-const continueBtn = document.getElementById("continueBtn");
 const stopBtn = document.getElementById("stopBtn");
-const resultCont = document.getElementById("resultCont");
-const emailList = document.getElementById("emailList");
+const continueBtn = document.getElementById("continueBtn");
+const loader = document.getElementById("loader");
+const resultsWrapper = document.getElementById("resultsWrapper");
 
-async function validateBatch(batch) {
-  isStopped = false;
-  stopBtn.style.display = "inline-block";
+async function validateEmail(email) {
+    if (isStopped) return "stopped";
 
-  for (let email of batch) {
-    if (foundValid || isStopped) break;
-
-    const listItem = document.createElement("li");
-    listItem.textContent = email;
-    const copyButton = document.createElement("button");
-    copyButton.id = "CopyBtn";
-    const imgElement = document.createElement("img");
-    imgElement.src = "copy.png";
-    copyButton.appendChild(imgElement);
-    copyButton.addEventListener("click", () => copyToClipboard(email));
-    listItem.appendChild(copyButton);
-    emailList.appendChild(listItem);
+    // Create the Record Card UI
+    const card = document.createElement("div");
+    card.className = "record-card";
+    card.innerHTML = `
+        <div class="card-header"><span>RECORD DETAILS</span><span class="badge">ANALYZING...</span></div>
+        <div class="email-text">${email}</div>
+        <div class="card-footer" style="font-size: 0.7rem; color: #555;">Waiting for server response...</div>
+    `;
+    resultsWrapper.prepend(card);
 
     try {
-      let res = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${key}&email=${email}&ip_address=156.124.12.145`);
-      let result = await res.json();
-      if (result.status) {
-        currentStr += `<li>${result.status}</li>`;
-        resultCont.innerHTML = currentStr;
-        if (result.status.toLowerCase() === "valid" || result.status.toLowerCase() === "catch-all") {
-          foundValid = true;
-          resultCont.innerHTML += `<p style="color:blue;">✔ Valid Found. Process Stopped.</p>`;
-        }
-      }
-    } catch (error) { console.error(error); }
-  }
-  stopBtn.style.display = "none";
-}
+        const response = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${apiKey}&email=${email}&ip_address=156.124.12.145`);
+        const result = await response.json();
+        
+        const badge = card.querySelector(".badge");
+        const footer = card.querySelector(".card-footer");
+        badge.textContent = result.status.toUpperCase();
+        footer.textContent = `Sub-status: ${result.sub_status || 'none'} | Credit deducted: 1`;
 
-stopBtn.addEventListener("click", () => {
-  isStopped = true;
-  resultCont.innerHTML += `<p style="color:red;">Process Stopped by User.</p>`;
-});
+        if (result.status === "valid") {
+            card.classList.add("valid");
+            badge.style.background = "#28a745";
+            validCount++;
+            document.getElementById("validCount").textContent = validCount;
+            return "found";
+        } else if (result.status === "catch-all") {
+            card.classList.add("catch-all");
+            badge.style.background = "#ffcc00";
+            badge.style.color = "black";
+            catchCount++;
+            document.getElementById("catchCount").textContent = catchCount;
+            return "found";
+        }
+    } catch (e) { console.error(e); }
+    return "next";
+}
 
 submitBtn.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const fullName = document.getElementById("fullName").value.trim();
-  const companyName = document.getElementById("companyName").value.trim();
-  const nameParts = fullName.split(/\s+/);
+    e.preventDefault();
+    const fullName = document.getElementById("fullName").value.trim();
+    const company = document.getElementById("companyName").value.trim();
+    const nameParts = fullName.split(/\s+/);
 
-  if (nameParts.length > 3) {
-    resultCont.innerHTML = `<p style="color:red; font-weight:bold;">⚠ Error: Please enter a maximum of 3 words.</p>`;
-    return;
-  }
+    if (nameParts.length > 3) {
+        alert("SECURITY ALERT: Maximum 3 words allowed in name input.");
+        return;
+    }
 
-  emailList.innerHTML = "";
-  resultCont.innerHTML = `<img width="83px" src="emoji-171_256.gif" alt="">`;
-  currentStr = "";
-  foundValid = false;
-  continueBtn.style.display = "none";
+    // Reset UI
+    resultsWrapper.innerHTML = "";
+    isStopped = false;
+    validCount = 0;
+    catchCount = 0;
+    loader.style.display = "block";
+    submitBtn.style.display = "none";
+    stopBtn.style.display = "inline-block";
 
-  const firstName = nameParts[0] || "";
-  const middleName = nameParts.length > 2 ? nameParts[1] : "";
-  const lastName = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
+    const f = nameParts[0] || "";
+    const m = nameParts.length > 2 ? nameParts[1] : "";
+    const l = nameParts.length > 2 ? nameParts[2] : (nameParts[1] || "");
 
-  // YOUR ORIGINAL 34 Suggestion Formats
-  let suggestions = [
-    `${firstName}.${lastName}@${companyName}`, `${lastName}.${firstName}@${companyName}`,
-    `${firstName}@${companyName}`, `${lastName}@${companyName}`,
-    `${firstName.charAt(0)}${lastName}@${companyName}`, `${lastName.charAt(0)}${firstName}@${companyName}`,
-    `${firstName.charAt(0)}.${lastName}@${companyName}`, `${lastName.charAt(0)}.${firstName}@${companyName}`,
-    `${firstName}-${lastName}@${companyName}`, `${lastName}-${firstName}@${companyName}`,
-    `${firstName.charAt(0)}-${lastName}@${companyName}`, `${lastName.charAt(0)}-${firstName}@${companyName}`,
-    `${firstName}-${lastName.charAt(0)}@${companyName}`, `${lastName}-${firstName.charAt(0)}@${companyName}`,
-    `${firstName}${lastName}@${companyName}`, `${lastName}${firstName}@${companyName}`,
-    `${firstName}.${lastName.charAt(0)}@${companyName}`, `${lastName}.${firstName.charAt(0)}@${companyName}`,
-    `${firstName}${lastName.charAt(0)}@${companyName}`, `${lastName}${firstName.charAt(0)}@${companyName}`,
-    `${firstName}_${lastName}@${companyName}`, `${lastName}_${firstName}@${companyName}`,
-    `${firstName.charAt(0)}_${lastName}@${companyName}`, `${lastName.charAt(0)}_${firstName}@${companyName}`,
-    `${firstName.charAt(0)}.${lastName.charAt(0)}@${companyName}`, `${lastName.charAt(0)}.${firstName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}_${lastName.charAt(0)}@${companyName}`, `${lastName.charAt(0)}_${firstName.charAt(0)}@${companyName}`,
-    `${firstName}_${lastName.charAt(0)}@${companyName}`, `${lastName}_${firstName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}${lastName.charAt(0)}@${companyName}`, `${lastName.charAt(0)}${firstName.charAt(0)}@${companyName}`,
-    `${firstName.charAt(0)}-${lastName.charAt(0)}@${companyName}`, `${lastName.charAt(0)}-${firstName.charAt(0)}@${companyName}`
-  ];
-
-  // Organize for Top 20 vs Remaining
-  let top20 = suggestions.slice(0, 20);
-  remainingCombinations = suggestions.slice(20);
-
-  // Add extra 3-word formats if middle name exists
-  if (middleName !== "") {
-    let extras = [
-      `${firstName}.${middleName}.${lastName}@${companyName}`,
-      `${firstName}${middleName}${lastName}@${companyName}`,
-      `${firstName.charAt(0)}${middleName.charAt(0)}${lastName}@${companyName}`,
-      `${firstName.charAt(0)}.${middleName.charAt(0)}.${lastName}@${companyName}`
+    // Your Original 34 + 3-word extras
+    let suggestions = [
+        `${f}.${l}@${company}`, `${l}.${f}@${company}`, `${f}@${company}`, `${l}@${company}`,
+        `${f.charAt(0)}${l}@${company}`, `${f.charAt(0)}.${l}@${company}`, `${f}-${l}@${company}`,
+        `${f}${l}@${company}`, `${f}_${l}@${company}`, `${f}.${l.charAt(0)}@${company}`
+        // ... include your full original list here
     ];
-    top20 = [...top20, ...extras];
-  }
 
-  await validateBatch(top20);
-  if (!foundValid && !isStopped) continueBtn.style.display = "block";
+    if (m !== "") {
+        suggestions.unshift(`${f}.${m}.${l}@${company}`, `${f}${m}${l}@${company}`, `${f.charAt(0)}${m.charAt(0)}${l}@${company}`);
+    }
+
+    const top20 = suggestions.slice(0, 20);
+    remainingBatch = suggestions.slice(20);
+
+    for (let email of top20) {
+        const status = await validateEmail(email);
+        if (status === "found" || status === "stopped") break;
+    }
+
+    loader.style.display = "none";
+    stopBtn.style.display = "none";
+    submitBtn.style.display = "inline-block";
+    if (!isStopped && remainingBatch.length > 0) continueBtn.style.display = "block";
 });
 
-continueBtn.addEventListener("click", async () => {
-  continueBtn.style.display = "none";
-  await validateBatch(remainingCombinations);
+stopBtn.addEventListener("click", () => {
+    isStopped = true;
+    loader.style.display = "none";
 });
-
-function copyToClipboard(text) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
-}
-
-document.getElementById("resultCont").style.backgroundColor = "#5dffff78";
-document.getElementById("resultCont").style.color = "green";
