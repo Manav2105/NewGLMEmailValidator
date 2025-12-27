@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Glam Email Validator</title>
+    <title>PRO – FINDER v3.0</title>
 </head>
 <body>
     <header class="header">
-        <div class="logo">Email-Validator <span class="v-tag">v3.0</span></div>
+        <div class="logo">PRO – FINDER <span class="v-tag">v3.0</span></div>
         <div class="stats">
             <div class="stat">VALID: <span id="v-count">0</span></div>
             <div class="stat">CHECKED: <span id="c-count">0</span></div>
@@ -18,9 +18,9 @@
     <main class="main-content">
         <div class="search-bar">
             <input type="text" id="fullName" placeholder="Full Name (Max 3 words)">
-            <input type="text" id="domain" placeholder="Company Domain">
+            <input type="text" id="domain" placeholder="Domain">
             <button id="submitBtn">ANALYSIS</button>
-            <button id="stopBtn" class="stop-btn" style="display:none;">STOP</button>
+            <button id="stopBtn" style="display:none; background: #ff3b3b;">STOP</button>
         </div>
 
         <div id="scanner" class="scanner" style="display:none;">
@@ -28,12 +28,10 @@
             <p>PENETRATING DATABASE...</p>
         </div>
 
-        <div id="resultsGrid" class="results-grid">
-            </div>
+        <div id="resultsGrid" class="results-grid"></div>
 
-        <button id="continueBtn" class="cont-btn" style="display:none;">TRY EXTENDED FORMATS</button>
+        <button id="continueBtn" style="display:none; width: 90%; margin: 10px auto; background: #ffcc00; color: black;">TRY EXTENDED FORMATS</button>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>
