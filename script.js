@@ -1,7 +1,7 @@
 let others = [];
 let isStopped = false;
 let foundValid = false;
-const apiKey = "YOUR_API_KEY"; // REPLACE THIS
+let key = "YOUR_API_KEY"; // REPLACE WITH YOUR KEY
 
 const submitBtn = document.getElementById("submitBtn");
 const stopBtn = document.getElementById("stopBtn");
@@ -16,6 +16,7 @@ async function checkBatch(list) {
     for (const email of list) {
         if (isStopped || foundValid) break;
 
+        // Create Card
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
@@ -25,50 +26,74 @@ async function checkBatch(list) {
         resultsGrid.prepend(card);
 
         try {
-            const res = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${apiKey}&email=${email}`);
+            const res = await fetch(`https://api.zerobounce.net/v2/validate?api_key=${key}&email=${email}&ip_address=156.124.12.145`);
             const data = await res.json();
             
             const badge = card.querySelector(".status");
-            badge.textContent = data.status;
+            badge.textContent = data.status || "Error";
 
-            if (data.status === "valid") {
-                card.classList.add("valid");
-                foundValid = true;
-                document.getElementById("v-count").innerText = parseInt(document.getElementById("v-count").innerText) + 1;
-            } else if (data.status === "catch-all") {
-                card.classList.add("catch-all");
-            }
+            // Update Counters
             document.getElementById("c-count").innerText = parseInt(document.getElementById("c-count").innerText) + 1;
 
-        } catch (e) { console.error("API Error"); }
+            if (data.status === "valid" || data.status === "catch-all") {
+                card.classList.add(data.status === "valid" ? "valid" : "catch-all");
+                if (data.status === "valid") {
+                    foundValid = true;
+                    document.getElementById("v-count").innerText = parseInt(document.getElementById("v-count").innerText) + 1;
+                }
+            }
+        } catch (e) { 
+            console.error("API Call Failed"); 
+        }
     }
     stopBtn.style.display = "none";
 }
 
 submitBtn.addEventListener("click", async () => {
-    const name = document.getElementById("fullName").value.trim();
-    const domain = document.getElementById("domain").value.trim();
-    const parts = name.split(/\s+/);
+    const fullName = document.getElementById("fullName").value.trim();
+    const company = document.getElementById("domain").value.trim();
+    const parts = fullName.split(/\s+/);
 
     if (parts.length > 3) {
-        alert("Max 3 words allowed.");
+        alert("Error: Maximum 3 words allowed.");
         return;
     }
 
-    // Reset
+    // Reset UI
     resultsGrid.innerHTML = "";
+    document.getElementById("v-count").innerText = "0";
+    document.getElementById("c-count").innerText = "0";
     foundValid = false;
     scanner.style.display = "block";
     submitBtn.style.display = "none";
 
-    const f = parts[0] || "", m = parts.length > 2 ? parts[1] : "", l = parts.length > 2 ? parts[2] : (parts[1] || "");
+    const f = parts[0] || "";
+    const m = parts.length > 2 ? parts[1] : "";
+    const l = parts.length > 2 ? parts[2] : (parts[1] || "");
 
-    const all = [
-        `${f}.${l}@${domain}`, `${f}@${domain}`, `${f.charAt(0)}${l}@${domain}`,
-        `${f}${l}@${domain}`, `${f.charAt(0)}.${l}@${domain}`, `${f}-${l}@${domain}`
+    // Full 34 Formats + 3-word extras
+    let all = [
+        `${f}.${l}@${company}`, `${l}.${f}@${company}`, `${f}@${company}`, `${l}@${company}`,
+        `${f.charAt(0)}${l}@${company}`, `${l.charAt(0)}${f}@${company}`,
+        `${f.charAt(0)}.${l}@${company}`, `${l.charAt(0)}.${f}@${company}`,
+        `${f}-${l}@${company}`, `${l}-${f}@${company}`,
+        `${f.charAt(0)}-${l}@${company}`, `${l.charAt(0)}-${f}@${company}`,
+        `${f}-${l.charAt(0)}@${company}`, `${l}-${f.charAt(0)}@${company}`,
+        `${f}${l}@${company}`, `${l}${f}@${company}`,
+        `${f}.${l.charAt(0)}@${company}`, `${l}.${f.charAt(0)}@${company}`,
+        `${f}${l.charAt(0)}@${company}`, `${l}${f.charAt(0)}@${company}`,
+        `${f}_${l}@${company}`, `${l}_${f}@${company}`,
+        `${f.charAt(0)}_${l}@${company}`, `${l.charAt(0)}_${f}@${company}`,
+        `${f.charAt(0)}.${l.charAt(0)}@${company}`, `${l.charAt(0)}.${f.charAt(0)}@${company}`,
+        `${f.charAt(0)}_${l.charAt(0)}@${company}`, `${l.charAt(0)}_${f.charAt(0)}@${company}`,
+        `${f}_${l.charAt(0)}@${company}`, `${l}_${f.charAt(0)}@${company}`,
+        `${f.charAt(0)}${l.charAt(0)}@${company}`, `${l.charAt(0)}${f.charAt(0)}@${company}`,
+        `${f.charAt(0)}-${l.charAt(0)}@${company}`, `${l.charAt(0)}-${f.charAt(0)}@${company}`
     ];
     
-    if (m) all.unshift(`${f}.${m}.${l}@${domain}`, `${f}${m}${l}@${domain}`);
+    if (m) {
+        all.unshift(`${f}.${m}.${l}@${company}`, `${f}${m}${l}@${company}`, `${f}.${m.charAt(0)}.${l}@${company}`);
+    }
 
     const top20 = all.slice(0, 20);
     others = all.slice(20);
@@ -80,12 +105,5 @@ submitBtn.addEventListener("click", async () => {
     if (!foundValid && others.length > 0) continueBtn.style.display = "block";
 });
 
-stopBtn.addEventListener("click", () => {
-    isStopped = true;
-    scanner.style.display = "none";
-});
-
-continueBtn.addEventListener("click", () => {
-    continueBtn.style.display = "none";
-    checkBatch(others);
-});
+stopBtn.addEventListener("click", () => { isStopped = true; scanner.style.display = "none"; });
+continueBtn.addEventListener("click", () => { continueBtn.style.display = "none"; checkBatch(others); });
